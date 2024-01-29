@@ -9,19 +9,41 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@babel/runtime": "^7.23.9",
+    "@univerjs/core": "^0.1.0-beta.3",
+    "@univerjs/design": "^0.1.0-beta.3",
+    "@univerjs/docs": "^0.1.0-beta.3",
+    "@univerjs/docs-ui": "^0.1.0-beta.3",
+    "@univerjs/engine-formula": "^0.1.0-beta.3",
+    "@univerjs/engine-numfmt": "^0.1.0-beta.3",
+    "@univerjs/engine-render": "^0.1.0-beta.3",
+    "@univerjs/sheets": "^0.1.0-beta.3",
+    "@univerjs/sheets-formula": "^0.1.0-beta.3",
+    "@univerjs/sheets-numfmt": "^0.1.0-beta.3",
+    "@univerjs/sheets-ui": "^0.1.0-beta.3",
+    "@univerjs/ui": "^0.1.0-beta.3",
+    "core-js": "^3.35.1",
+    "next": "14.1.0",
     "react": "^18",
-    "react-dom": "^18",
-    "next": "14.1.0"
+    "react-dom": "^18"
   },
   "devDependencies": {
-    "typescript": "^5",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
+    "eslint": "^8",
+    "eslint-config-next": "14.1.0",
     "postcss": "^8",
     "tailwindcss": "^3.3.0",
-    "eslint": "^8",
-    "eslint-config-next": "14.1.0"
-  }
+    "ts-loader": "^9.5.1",
+    "typescript": "^5",
+    "webpack": "^5.90.0",
+    "webpack-cli": "^5.1.4"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not op_mini all"
+  ]
 }
