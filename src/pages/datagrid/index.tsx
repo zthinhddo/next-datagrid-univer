@@ -5,6 +5,8 @@ const DynamicDatagridComponent = dynamic(() => import('@/components/datagrid/dat
   loading: () => <div>Loading...</div>,
 })
 
-export default function Home() {
+const DataGridComponent: React.FC = () => {
   return <DynamicDatagridComponent />;
-}
+};
+
+export default DataGridComponent;

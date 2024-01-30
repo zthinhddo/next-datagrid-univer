@@ -10,12 +10,7 @@ body {
   height: 100%;
 }
 
-#myapp {
-  height: 100vh;
-  overflow: hidden;
-}
-
-canvas {
+/* canvas {
   height: 100% !important;
   width: 100% !important;
-}
+} */

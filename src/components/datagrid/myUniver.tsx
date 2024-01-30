@@ -1,4 +1,4 @@
-import { LocaleType, LogLevel, Univer } from "@univerjs/core";
+import { LocaleType, LogLevel, Univer, Workbook } from "@univerjs/core";
 import { defaultTheme } from "@univerjs/design";
 import "@univerjs/design/lib/index.css";
 import { UniverDocsPlugin } from "@univerjs/docs";
@@ -12,16 +12,26 @@ import { UniverSheetsUIPlugin } from "@univerjs/sheets-ui";
 import "@univerjs/sheets-ui/lib/index.css";
 import { UniverUIPlugin } from "@univerjs/ui";
 import "@univerjs/ui/lib/index.css";
-import { useEffect } from "react";
+import { memo, useEffect } from "react";
 
-import { enUS as UniverDesignEnUS } from '@univerjs/design';
-import { enUS as UniverDocsUIEnUS } from '@univerjs/docs-ui';
-import { enUS as UniverSheetsEnUS } from '@univerjs/sheets';
-import { enUS as UniverSheetsUIEnUS } from '@univerjs/sheets-ui';
-import { enUS as UniverUiEnUS } from '@univerjs/ui';
+import { myWorkbenchOptions } from "@/utils/constant";
+import { enUS as UniverDesignEnUS } from "@univerjs/design";
+import { enUS as UniverDocsUIEnUS } from "@univerjs/docs-ui";
+import { enUS as UniverSheetsEnUS } from "@univerjs/sheets";
+import { enUS as UniverSheetsUIEnUS } from "@univerjs/sheets-ui";
+import { enUS as UniverUiEnUS } from "@univerjs/ui";
+import { EMPTY_DATA_SHEET } from "./data_samples/empty_data";
+import { DEFAULT_WORKBOOK_DATA_DEMO } from "./data_samples/data";
 
-const MyTestComponent = () => {
+type ComponentProps = {
+  id: string;
+  setWorkbook: (newWorkbook: Workbook) => void;
+};
+
+const MyUniverSpreadsheet = memo(function MyUniverSpreadsheet(props: ComponentProps) {
+  console.log("re-render MyUniverSpreadsheet");
   useEffect(() => {
+    if (!props.id || props.id === "") return;
     const univer = new Univer({
       theme: defaultTheme,
       logLevel: LogLevel.VERBOSE,
@@ -41,29 +51,26 @@ const MyTestComponent = () => {
       hasScroll: false,
     });
     univer.registerPlugin(UniverRenderEnginePlugin);
-    univer.registerPlugin(UniverUIPlugin, {
-      container: "myapp",
-      header: true,
-      toolbar: true,
-      footer: true,
-    });
-
+    univer.registerPlugin(UniverUIPlugin, { ...myWorkbenchOptions });
     // sheet plugins
     univer.registerPlugin(UniverSheetsPlugin);
     univer.registerPlugin(UniverSheetsUIPlugin);
-
     univer.registerPlugin(UniverSheetsNumfmtPlugin);
     univer.registerPlugin(UniverFormulaEnginePlugin);
     univer.registerPlugin(UniverSheetsFormulaPlugin);
 
-    univer.createUniverSheet({});
-  }, []);
+    const newWorkbook = univer.createUniverSheet(DEFAULT_WORKBOOK_DATA_DEMO);
+    // Additional configuartion
+    if (newWorkbook) {
+      props.setWorkbook(newWorkbook);
+    }
+  }, [props, props.id]);
 
   return (
     <>
-      <div id={`myapp`} />
+      <div className={`h-lvh overflow-hidden`} id={props.id}  />
     </>
   );
-};
+});
 
-export default MyTestComponent;
+export default MyUniverSpreadsheet;

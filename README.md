@@ -39,4 +39,87 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
 
+### Install univer packages
 npm i @univerjs/core @univerjs/core @univerjs/docs @univerjs/docs-ui @univerjs/engine-formula @univerjs/engine-numfmt @univerjs/engine-render @univerjs/sheets @univerjs/sheets-formula @univerjs/sheets-numfmt @univerjs/sheets-ui @univerjs/ui @babel/runtime core-js
+
+#### Spreadsheet structure
+```sh
+{
+    "id": "tHwFEK",
+    "sheetOrder": [
+        "sheet-01"
+    ],
+    "name": "",
+    "appVersion": "",
+    "locale": "zhCN",
+    "styles": {},
+    "sheets": {
+        "sheet-01": {
+            "type": 0,
+            "name": "Sheet1",
+            "id": "sheet-01",
+            "tabColor": "",
+            "hidden": 0,
+            "rowCount": 1000,
+            "columnCount": 20,
+            "zoomRatio": 1,
+            "freeze": {
+                "xSplit": 0,
+                "ySplit": 0,
+                "startRow": -1,
+                "startColumn": -1
+            },
+            "scrollTop": 0,
+            "scrollLeft": 0,
+            "defaultColumnWidth": 73,
+            "defaultRowHeight": 19,
+            "mergeData": [],
+            "hideRow": [],
+            "hideColumn": [],
+            "cellData": {
+                "1": {
+                    "1": {
+                        "v": "a",
+                        "t": 1
+                    }
+                },
+                "3": {
+                    "1": {
+                        "v": "a",
+                        "t": 1
+                    }
+                }
+            },
+            "rowData": {
+                "1": {
+                    "hd": 0,
+                    "h": 19,
+                    "ah": 19
+                },
+                "3": {
+                    "hd": 0,
+                    "h": 19,
+                    "ah": 19
+                }
+            },
+            "columnData": {},
+            "status": 1,
+            "showGridlines": 1,
+            "rowHeader": {
+                "width": 46,
+                "hidden": 0
+            },
+            "columnHeader": {
+                "height": 20,
+                "hidden": 0
+            },
+            "selections": [
+                "A1"
+            ],
+            "rightToLeft": 0,
+            "pluginMeta": {}
+        }
+    },
+    "resources": []
+}
+```
