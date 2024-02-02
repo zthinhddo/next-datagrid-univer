@@ -5,8 +5,8 @@ export const myWorkbenchOptions: IWorkbenchOptions = {
     outerLeft: false,
     innerLeft: false,
     header: false,
-    toolbar: true,
-    footer: true,
+    toolbar: false, // Alignment, merging functions, fomular,...
+    footer: false, // Sheet list
     infoBar: true,
 }
 

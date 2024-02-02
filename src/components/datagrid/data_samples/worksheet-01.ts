@@ -2,18 +2,18 @@ import { IWorksheetData } from "@univerjs/core";
 
 export const SAMPLE_WOKRSHEET_01: IWorksheetData = {
   type: 0,
-  name: "Sample worksheet name",
-  id: "sheet-02",
+  name: "Sample sheet name",
+  id: "my-sheet-01",
   tabColor: "",
   hidden: 0,
   rowCount: 1000,
-  columnCount: 26,
+  columnCount: 20,
   zoomRatio: 1,
   cellData: {
     "0": {
-      "0": {
-        s: "1",
-        v: "A Schedule of Items",
+      "1": {
+        s: "",
+        v: "Hello World",
       },
     },
   },

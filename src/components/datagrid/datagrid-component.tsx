@@ -1,48 +1,36 @@
 import MyUniverSpreadsheet from "@/components/datagrid/myUniver";
 import { saveFile } from "@/utils/commonFuncs";
-import {
-  IWorkbookData,
-  IWorksheetData,
-  LocaleType,
-  LogLevel,
-  Univer,
-  Workbook,
-} from "@univerjs/core";
+import { IWorkbookData, Univer, Workbook } from "@univerjs/core";
 import { useCallback, useEffect, useState } from "react";
-import { SAMPLE_WOKRSHEET_01 } from "./data_samples/worksheet-01";
 import { DEFAULT_WORKBOOK_DATA_DEMO } from "./data_samples/data";
-import { defaultTheme } from "@univerjs/design";
-
-import { enUS as UniverDesignEnUS } from "@univerjs/design";
-import { enUS as UniverDocsUIEnUS } from "@univerjs/docs-ui";
-import { enUS as UniverSheetsEnUS, UniverSheetsPlugin } from "@univerjs/sheets";
-import {
-  enUS as UniverSheetsUIEnUS,
-  UniverSheetsUIPlugin,
-} from "@univerjs/sheets-ui";
-import { UniverUIPlugin, enUS as UniverUiEnUS } from "@univerjs/ui";
-import { myWorkbenchOptions } from "@/utils/constant";
-import { UniverDocsPlugin } from "@univerjs/docs";
-import { UniverFormulaEnginePlugin } from "@univerjs/engine-formula";
-import { UniverRenderEnginePlugin } from "@univerjs/engine-render";
-import { UniverSheetsFormulaPlugin } from "@univerjs/sheets-formula";
-import { UniverSheetsNumfmtPlugin } from "@univerjs/sheets-numfmt";
-import { EMPTY_DATA_SHEET } from "./data_samples/empty_data";
+import { SAMPLE_WORKBOOK_DATA_DEMO } from "./data_samples/workbook-01";
 
 export default function DataGridComponent() {
+  const [univerModule, setUniverModule] = useState<Univer>();
   const [workbook, setWorkbook] = useState<Workbook>();
   const [fileName, setFileName] = useState<string>("");
   const [isValidate, setIsValidate] = useState<boolean>(true);
-  const [uploadFile, setUploadFile] = useState<any>();
+  const [uploadFile, setUploadFile] = useState<File>();
   const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [isLoadSample, setIsLoadSample] = useState<boolean>(false);
+  const [spreadSheetData, setSpreadsheetData] = useState<IWorkbookData>(null);
 
   // ============ USE EFFECT ============ //
-  const memoizedSetWorkbook = useCallback((newWorkbook: Workbook) => {
-    setWorkbook(newWorkbook);
-  }, []);
+  const onSetWorkbookSpreadsheet = (newWorkbook: Workbook) => {
+    if (
+      !workbook ||
+      (workbook && workbook.getUnitId() !== newWorkbook.getUnitId())
+    ) {
+      setWorkbook(newWorkbook);
+    }
+  };
 
   useEffect(() => {
-  }, [isUploading])
+    if (isLoadSample) {
+      console.log("load new workbook");
+      setSpreadsheetData(DEFAULT_WORKBOOK_DATA_DEMO);
+    }
+  }, [isLoadSample]);
 
   useEffect(() => {
     if (!workbook) return;
@@ -76,6 +64,7 @@ export default function DataGridComponent() {
     const myBlob = new Blob([objJson], { type: "application/json" });
 
     saveFile(myBlob, fileName);
+    setFileName("");
   };
 
   const onChangeFileName = (e: any) => {
@@ -87,39 +76,50 @@ export default function DataGridComponent() {
 
   const onFileUploading = (e: any) => {
     setUploadFile(e.target.files[0]);
-    setIsUploading(true);
+    const file = e.target.files[0];
+  
+  if (file) {
+    const reader = new FileReader();
+    
+    reader.onload = function(e) {
+      const content = e.target.result;
+      console.log('File content:', content);
+      if (content) {
+        setSpreadsheetData(JSON.parse(content.toString()));
+      }
+    };
+    
+    reader.readAsText(file);
+  } else {
+    console.log('No file selected');
+  }
   };
 
   const onLoadSampleSheets = async () => {
-    console.log("on load sample sheets");
-    if (!workbook) {
-      window.alert("Workbook is not defined");
-    }
-
-    // Add new sheet
-    const worksheetlist = workbook.getWorksheets();
-    console.log('worksheet list: ', worksheetlist)
+    setIsLoadSample(true);
   };
 
   const onRefreshWorkbook = () => {
     if (!workbook) {
       window.alert("Workbook is not defined");
     }
-    workbook.flush();
-    console.log("config: ", workbook.getConfig());
-    console.log("sheet: ", workbook.getSheets());
   };
-
-  useEffect(() => {
-    if (!uploadFile && isUploading) window.alert("File is not available");
-    // Read file
-  }, [uploadFile, isUploading]);
 
   return (
     <div id="datagrid-wrapper" className={`grid grid-cols-12 h-svh`}>
       {/* ============ SPREADSHEET AREA ============ */}
       <div id="left-area" className={`grid col-span-10`}>
-        <MyUniverSpreadsheet id={"myapp"} setWorkbook={memoizedSetWorkbook} />
+        {spreadSheetData ? (
+          <MyUniverSpreadsheet
+            data={spreadSheetData}
+            setWorkbookUniver={onSetWorkbookSpreadsheet}
+          />
+        ) : (
+          <MyUniverSpreadsheet
+            data={SAMPLE_WORKBOOK_DATA_DEMO}
+            setWorkbookUniver={onSetWorkbookSpreadsheet}
+          />
+        )}
       </div>
       {/* ============ TOOLBAR AREA ============ */}
       <div
@@ -174,7 +174,7 @@ export default function DataGridComponent() {
               <input
                 type="file"
                 id="fileInput"
-                accept=".xlsx,.xls"
+                accept=".xlsx,.xls,.json"
                 className={`hidden`}
                 onChange={onFileUploading}
               />
@@ -183,7 +183,7 @@ export default function DataGridComponent() {
                 onClick={() => document.getElementById("fileInput").click()}
               >
                 <strong className={``}>Upload file </strong>
-                <i className={`text-black`}>(.xlsx, .xls)</i>
+                <i className={`text-black`}>(.xlsx, .xls, .json)</i>
               </button>
             </div>
           </div>
@@ -205,6 +205,7 @@ export default function DataGridComponent() {
                 className={`w-full bg-inherit focus:outline-none`}
                 placeholder="Input filename here..."
                 onChange={onChangeFileName}
+                value={fileName}
                 autoFocus
               ></input>
             </div>
