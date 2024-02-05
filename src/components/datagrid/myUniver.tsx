@@ -40,7 +40,7 @@ const MyUniverSpreadsheet = (props: ComponentProps) => {
   const univer = new Univer({
     theme: defaultTheme,
     logLevel: LogLevel.VERBOSE,
-    locale: LocaleType.ZH_CN,
+    locale: LocaleType.EN_US,
     locales: {
       [LocaleType.EN_US]: {
         ...UniverSheetsEnUS,

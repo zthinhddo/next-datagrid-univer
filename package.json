@@ -2,6 +2,20 @@
   "name": "next-datagrid-univer",
   "version": "0.1.0",
   "private": true,
+  "workspaces": [
+    "packages/univerjs/core",
+    "packages/univerjs/design",
+    "packages/univerjs/ui",
+    "packages/univerjs/docs",
+    "packages/univerjs/docs-ui",
+    "packages/univerjs/engine-formula",
+    "packages/univerjs/engine-numfmt",
+    "packages/univerjs/engine-render",
+    "packages/univerjs/sheets",
+    "packages/univerjs/sheets-formula",
+    "packages/univerjs/sheets-ui",
+    "packages/univerjs/sheets-numfmt"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -28,7 +42,19 @@
     "ts-loader": "^9.5.1",
     "typescript": "^5",
     "webpack": "^5.90.0",
-    "webpack-cli": "^5.1.4"
+    "webpack-cli": "^5.1.4",
+    "@univerjs/core": "*",
+    "@univerjs/design": "*",
+    "@univerjs/ui": "*",
+    "@univerjs/docs": "*",
+    "@univerjs/engine-formula": "*",
+    "@univerjs/engine-numfmt": "*",
+    "@univerjs/engine-render": "*",
+    "@univerjs/sheets": "*",
+    "@univerjs/sheets-formula": "*",
+    "@univerjs/sheets-ui": "*",
+    "@univerjs/sheets-numfmt": "*",
+    "@univerjs/docs-ui": "*"
   },
   "browserslist": [
     ">0.2%",
