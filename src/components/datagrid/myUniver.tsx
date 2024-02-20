@@ -21,14 +21,16 @@ import "@univerjs/sheets-ui/lib/index.css";
 import { UniverUIPlugin } from "@univerjs/ui";
 import "@univerjs/ui/lib/index.css";
 
-import { myWorkbenchOptions } from "@/utils/constant";
+import { DEFAULT_CONTAINER_ID, myWorkbenchOptions } from "@/utils/constant";
 import { enUS as UniverDesignEnUS } from "@univerjs/design";
 import { enUS as UniverDocsUIEnUS } from "@univerjs/docs-ui";
 import { enUS as UniverSheetsEnUS } from "@univerjs/sheets";
 import { enUS as UniverSheetsUIEnUS } from "@univerjs/sheets-ui";
 import { enUS as UniverUiEnUS } from "@univerjs/ui";
+import { enUS as UniverSheetsFormulaEnUS } from "@univerjs/sheets-formula";
 
 type ComponentProps = {
+  id: string;
   data: IWorkbookData;
   setWorkbookUniver: (newWorkbook: Workbook) => void;
 };
@@ -36,6 +38,10 @@ type ComponentProps = {
 const MyUniverSpreadsheet = (props: ComponentProps) => {
   console.log("re-render MyUniverSpreadsheet");
   console.log("data: ", props.data);
+  const options = {
+    ...myWorkbenchOptions,
+    container: props.id || DEFAULT_CONTAINER_ID,
+  };
   // Fomulas Plugin
   const univer = new Univer({
     theme: defaultTheme,
@@ -48,6 +54,7 @@ const MyUniverSpreadsheet = (props: ComponentProps) => {
         ...UniverSheetsUIEnUS,
         ...UniverUiEnUS,
         ...UniverDesignEnUS,
+        ...UniverSheetsFormulaEnUS,
       },
     },
   });
@@ -56,7 +63,7 @@ const MyUniverSpreadsheet = (props: ComponentProps) => {
     hasScroll: false,
   });
   univer.registerPlugin(UniverRenderEnginePlugin);
-  univer.registerPlugin(UniverUIPlugin, { ...myWorkbenchOptions });
+  univer.registerPlugin(UniverUIPlugin, { ...options });
   // sheet plugins
   univer.registerPlugin(UniverSheetsPlugin);
   univer.registerPlugin(UniverSheetsUIPlugin);
@@ -67,7 +74,10 @@ const MyUniverSpreadsheet = (props: ComponentProps) => {
   props.setWorkbookUniver(newWorkbook);
   return (
     <>
-      <div className={`h-lvh overflow-hidden`} id={"myapp"} />
+      <div
+        className={`h-lvh overflow-hidden`}
+        id={props.id || DEFAULT_CONTAINER_ID}
+      />
     </>
   );
 };

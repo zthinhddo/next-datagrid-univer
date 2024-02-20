@@ -123,3 +123,5 @@ npm i @univerjs/core @univerjs/core @univerjs/docs @univerjs/docs-ui @univerjs/e
     "resources": []
 }
 ```
+
+### Uninstall Univer package

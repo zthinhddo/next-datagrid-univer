@@ -5,7 +5,6 @@ import { useCallback, useEffect, useState } from "react";
 import { DEFAULT_WORKBOOK_DATA_DEMO } from "./data_samples/data";
 import { SAMPLE_WORKBOOK_DATA_DEMO } from "./data_samples/workbook-01";
 
-
 export default function DataGridComponent() {
   const [univerModule, setUniverModule] = useState<Univer>();
   const [workbook, setWorkbook] = useState<Workbook>();
@@ -15,8 +14,44 @@ export default function DataGridComponent() {
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [isLoadSample, setIsLoadSample] = useState<boolean>(false);
   const [spreadSheetData, setSpreadsheetData] = useState<IWorkbookData>(null);
+  const [sheetDataList, setSheetDataList] = useState<any[]>([]);
+  const [isReload, setIsReload] = useState<boolean>(false);
 
   // ============ USE EFFECT ============ //
+    async function fetchData() {
+      const apiUrl = `api/sheet-api/sheets`;
+      await fetch(apiUrl, {
+        method: "GET",
+      })
+        .then((res) => {
+          if (res.ok) {
+            return res.json();
+          }
+        })
+        .then((res) => {
+          console.log("data from db: ", res);
+          if (res.data && res.data.length > 0) {
+            const mySheetData = [];
+            for (let i = 0; i < res.data.length; i++) {
+              mySheetData.push({
+                name: res.data[i].sheet_id,
+                data: res.data[i].data,
+              });
+            }
+            console.log("mySheetData: ", mySheetData);
+            setSheetDataList(mySheetData);
+          }
+        })
+        .catch((err) => {
+          console.log("Get sheets data failed: ", err);
+          return [];
+        });
+    }
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   const onSetWorkbookSpreadsheet = (newWorkbook: Workbook) => {
     if (
       !workbook ||
@@ -42,6 +77,55 @@ export default function DataGridComponent() {
   }, [workbook]);
 
   // ============ COMMON FUNCTION ============ //
+
+  const onChangeSheet = async (e) => {
+    // console.log("onChangeSheet");
+    if (!workbook) return;
+    setSpreadsheetData(DEFAULT_WORKBOOK_DATA_DEMO);
+    await fetch(`api/sheet-api/${e.target.value}`)
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        }
+      })
+      .then((res) => {
+        if (res.data && res.data.length > 0) {
+          const firstSheetData = res.data[0];
+          console.log('parsedData: ', JSON.parse(firstSheetData.data));
+          const parsedData = JSON.parse(firstSheetData.data);
+          setSpreadsheetData(parsedData);
+        }
+      })
+      .catch((err) => {
+        console.log("Get single sheet from db: ", err);
+      });
+  };
+
+  const onSaveDBClicked = () => {
+    if (!workbook) {
+      window.alert("workbook is not ready");
+    }
+    const sheetId = workbook.getActiveSheet().getSheetId();
+    const sheetData = workbook.save();
+    const apiUrl = `api/sheet-api/${sheetId}`;
+    fetch(apiUrl, {
+      body: sheetData ? JSON.stringify(sheetData) : "",
+      method: "POST",
+    })
+      .then((res) => {
+        if (res.ok) {
+          window.alert("Save Data Sucessfully");
+          fetchData();
+        }
+      })
+      .catch((res) => {
+        console.error("Failed to save data to postgres database");
+      })
+      .finally(() => {
+        console.log("onSaveDBClicked executed");
+      });
+  };
+
   const onSaveClicked = () => {
     console.log("onSaveClicked");
     console.log("filename: ", "");
@@ -78,22 +162,22 @@ export default function DataGridComponent() {
   const onFileUploading = (e: any) => {
     setUploadFile(e.target.files[0]);
     const file = e.target.files[0];
-  
-  if (file) {
-    const reader = new FileReader();
-    
-    reader.onload = function(e) {
-      const content = e.target.result;
-      console.log('File content:', content);
-      if (content) {
-        setSpreadsheetData(JSON.parse(content.toString()));
-      }
-    };
-    
-    reader.readAsText(file);
-  } else {
-    console.log('No file selected');
-  }
+
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onload = function (e) {
+        const content = e.target.result;
+        console.log("File content:", content);
+        if (content) {
+          setSpreadsheetData(JSON.parse(content.toString()));
+        }
+      };
+
+      reader.readAsText(file);
+    } else {
+      console.log("No file selected");
+    }
   };
 
   const onLoadSampleSheets = async () => {
@@ -112,11 +196,13 @@ export default function DataGridComponent() {
       <div id="left-area" className={`grid col-span-10`}>
         {spreadSheetData ? (
           <MyUniverSpreadsheet
+            id={"my-app"}
             data={spreadSheetData}
             setWorkbookUniver={onSetWorkbookSpreadsheet}
           />
         ) : (
           <MyUniverSpreadsheet
+            id={"my-app-default"}
             data={SAMPLE_WORKBOOK_DATA_DEMO}
             setWorkbookUniver={onSetWorkbookSpreadsheet}
           />
@@ -169,6 +255,7 @@ export default function DataGridComponent() {
                 <button className={`w-full text-white`}>Paste</button>
               </div>
             </div>
+            {/* UPLOAD FILE */}
             <div
               className={`w-full bg-blue-500 rounded-lg p-2 mt-2 text-center`}
             >
@@ -187,6 +274,33 @@ export default function DataGridComponent() {
                 <i className={`text-black`}>(.xlsx, .xls, .json)</i>
               </button>
             </div>
+            <div
+              className={`w-full bg-yellow-200 rounded-lg p-2 mt-2 text-center h-[400px]`}
+            >
+              <ul
+                className={`max-h-svh bg-blue-500 h-full rounded-lg overflow-auto`}
+              >
+                {sheetDataList && sheetDataList.length > 0 ? (
+                  sheetDataList.map((sheet, index) => (
+                    <li
+                      key={`sheet_${index}`}
+                      className={`bg-red-400 p-2 mb-2 rounded-lg`}
+                    >
+                      <button
+                        className={`bg-green-400 w-full`}
+                        onClick={onChangeSheet}
+                        value={sheet.name}
+                      >
+                        {sheet.name}
+                      </button>
+                    </li>
+                  ))
+                ) : (
+                  <></>
+                )}
+              </ul>
+            </div>
+            {/* UPLOAD FILE */}
           </div>
           {/* Bottom */}
           <div id={`bottom-wrapper`} className={`w-full`}>
@@ -211,10 +325,17 @@ export default function DataGridComponent() {
               ></input>
             </div>
             <div
-              className={`text-center rounded-lg p-2 w-full border-black border-2 font-bold`}
+              className={`text-center rounded-lg p-2 w-full border-black border-2 font-bold mb-2`}
             >
               <button className={`w-full`} onClick={onSaveClicked}>
                 Save
+              </button>
+            </div>
+            <div
+              className={`text-center rounded-lg p-2 w-full border-black border-2 font-bold`}
+            >
+              <button className={`w-full`} onClick={onSaveDBClicked}>
+                Save to DB
               </button>
             </div>
             <div

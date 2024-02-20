@@ -1,7 +1,6 @@
 import { IWorkbenchOptions } from "@univerjs/ui/lib/types/controllers/ui/ui.controller.js";
 
 export const myWorkbenchOptions: IWorkbenchOptions = {
-    container: "myapp",
     outerLeft: false,
     innerLeft: false,
     header: false,
@@ -13,3 +12,4 @@ export const myWorkbenchOptions: IWorkbenchOptions = {
 // ============== CONSTANTS =============
 export const ROOT = 'src'
 export const FILES_DIRECTORY = 'files'
+export const DEFAULT_CONTAINER_ID = "my-app"
