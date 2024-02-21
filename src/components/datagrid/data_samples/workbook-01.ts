@@ -7,8 +7,8 @@ export const SAMPLE_WORKBOOK_DATA_DEMO: IWorkbookData = {
   appVersion: "3.0.0-alpha",
   locale: LocaleType.ZH_CN,
   styles: undefined,
-  sheetOrder: ["my-sheet-01"],
+  sheetOrder: ["root-sample-sheet"],
   sheets: {
-    "my-sheet-01": { ...SAMPLE_WOKRSHEET_01 },
+    "root-sample-sheet": { ...SAMPLE_WOKRSHEET_01 },
   },
 };

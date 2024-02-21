@@ -3,7 +3,7 @@ import { IWorksheetData } from "@univerjs/core";
 export const SAMPLE_WOKRSHEET_01: IWorksheetData = {
   type: 0,
   name: "Sample sheet name",
-  id: "my-sheet-01",
+  id: "root-sample-sheet",
   tabColor: "",
   hidden: 0,
   rowCount: 1000,

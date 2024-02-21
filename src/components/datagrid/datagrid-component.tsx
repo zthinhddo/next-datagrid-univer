@@ -18,35 +18,35 @@ export default function DataGridComponent() {
   const [isReload, setIsReload] = useState<boolean>(false);
 
   // ============ USE EFFECT ============ //
-    async function fetchData() {
-      const apiUrl = `api/sheet-api/sheets`;
-      await fetch(apiUrl, {
-        method: "GET",
+  async function fetchData() {
+    const apiUrl = `api/sheet-api/sheets`;
+    await fetch(apiUrl, {
+      method: "GET",
+    })
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        }
       })
-        .then((res) => {
-          if (res.ok) {
-            return res.json();
+      .then((res) => {
+        console.log("data from db: ", res);
+        if (res.data && res.data.length > 0) {
+          const mySheetData = [];
+          for (let i = 0; i < res.data.length; i++) {
+            mySheetData.push({
+              name: res.data[i].sheet_id,
+              data: res.data[i].data,
+            });
           }
-        })
-        .then((res) => {
-          console.log("data from db: ", res);
-          if (res.data && res.data.length > 0) {
-            const mySheetData = [];
-            for (let i = 0; i < res.data.length; i++) {
-              mySheetData.push({
-                name: res.data[i].sheet_id,
-                data: res.data[i].data,
-              });
-            }
-            console.log("mySheetData: ", mySheetData);
-            setSheetDataList(mySheetData);
-          }
-        })
-        .catch((err) => {
-          console.log("Get sheets data failed: ", err);
-          return [];
-        });
-    }
+          console.log("mySheetData: ", mySheetData);
+          setSheetDataList(mySheetData);
+        }
+      })
+      .catch((err) => {
+        console.log("Get sheets data failed: ", err);
+        return [];
+      });
+  }
 
   useEffect(() => {
     fetchData();
@@ -91,7 +91,7 @@ export default function DataGridComponent() {
       .then((res) => {
         if (res.data && res.data.length > 0) {
           const firstSheetData = res.data[0];
-          console.log('parsedData: ', JSON.parse(firstSheetData.data));
+          console.log("parsedData: ", JSON.parse(firstSheetData.data));
           const parsedData = JSON.parse(firstSheetData.data);
           setSpreadsheetData(parsedData);
         }
@@ -106,8 +106,9 @@ export default function DataGridComponent() {
       window.alert("workbook is not ready");
     }
     const sheetId = workbook.getActiveSheet().getSheetId();
+    const sheetName = workbook.getActiveSheet().getName();
     const sheetData = workbook.save();
-    const apiUrl = `api/sheet-api/${sheetId}`;
+    const apiUrl = `api/sheet-api/${sheetName}`;
     fetch(apiUrl, {
       body: sheetData ? JSON.stringify(sheetData) : "",
       method: "POST",
@@ -190,6 +191,10 @@ export default function DataGridComponent() {
     }
   };
 
+  const onClickNew = () => {
+    setSpreadsheetData(SAMPLE_WORKBOOK_DATA_DEMO);
+  };
+
   return (
     <div id="datagrid-wrapper" className={`grid grid-cols-12 h-svh`}>
       {/* ============ SPREADSHEET AREA ============ */}
@@ -217,18 +222,16 @@ export default function DataGridComponent() {
           <div id="clipboard" className={`w-full rounded-lg p-2 h-[50vh]`}>
             {/* Upper */}
             <div id="upper-wrapper">
-              <div
+              {/* <div
                 id="copy-cut-tool"
                 className={`flex flex-row w-full gap-2 text-center`}
               >
-                {/* Copy */}
                 <div
                   id="copy"
                   className={`w-full bg-orange-400 rounded-lg p-2`}
                 >
                   <button className={`w-full text-white`}>Copy</button>
                 </div>
-                {/* Cut */}
                 <div
                   id="cut"
                   className={`w-full bg-orange-400  rounded-lg p-2`}
@@ -246,13 +249,21 @@ export default function DataGridComponent() {
                     Refresh
                   </button>
                 </div>
-              </div>
+              </div> */}
               {/* Paste */}
-              <div
+              {/* <div
                 id="paste"
                 className={`w-full bg-blue-500 rounded-lg p-2 mt-2 text-center`}
               >
                 <button className={`w-full text-white`}>Paste</button>
+              </div> */}
+              <div
+                id="new"
+                className={`w-full bg-blue-500 rounded-lg p-2 mt-2 text-center`}
+              >
+                <button className={`w-full text-white`} onClick={onClickNew}>
+                  New
+                </button>
               </div>
             </div>
             {/* UPLOAD FILE */}
